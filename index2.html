@@ -2,67 +2,183 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Calculateur DMV Pro</title>
+  <title>Calculateur DMV Pro (Dark Mode)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
-    html, body { height: 100%; margin: 0; background: linear-gradient(135deg, #e0e0e0, #ffffff); font-family: 'Arial', sans-serif; display: flex; justify-content: center; align-items: center; }
-    .card { width: 100%; max-width: 400px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(15px); border-radius: 30px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); border: 1px solid rgba(255, 255, 255, 0.3); }
-    .form-label { font-weight: bold; color: #ff0000; font-size: 13px; margin-bottom: 2px; }
-    .form-control { background: rgba(255,255,255,0.6); border: 1px solid #ff0000; border-radius: 10px; padding: 8px; font-size: 15px; }
+    /* NOUVEAU DESIGN DARK PRO */
+    html, body { 
+      height: 100%; 
+      margin: 0; 
+      background-color: #121212; /* Fond très sombre */
+      font-family: 'Segoe UI', Arial, sans-serif; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      color: #e0e0e0; /* Texte clair */
+    }
     
-    .btn-needle { 
-      background: white; 
-      border: 1px solid #ff0000; 
-      color: #ff0000; 
+    .card { 
+      width: 100%; 
+      max-width: 400px; 
+      background-color: #1e1e1e; /* Fond de la carte légèrement plus clair */
+      border-radius: 25px; 
+      padding: 25px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Ombre portée douce */
+      border: 1px solid #333; /* Contour fin */
+    }
+    
+    .form-label { 
+      font-weight: bold; 
+      color: #888; /* Texte d'étiquette discret */
+      font-size: 13px; 
+      margin-bottom: 2px; 
+      text-transform: uppercase;
+    }
+    
+    .form-control { 
+      background-color: #2c2c2c; /* Champs sombres */
+      border: 1px solid #444; /* Bordure discrète */
       border-radius: 10px; 
-      padding: 6px; 
+      padding: 10px; 
+      font-size: 16px; 
+      color: #fff; /* Texte de saisie blanc */
+      transition: all 0.2s;
+    }
+    
+    .form-control::placeholder {
+      color: #666; /* Placeholder sombre */
+    }
+    
+    .form-control:focus {
+      background-color: #333;
+      border-color: #ff3333; /* Bordure rouge au focus */
+      color: #fff;
+      box-shadow: 0 0 10px rgba(255,51,51,0.3);
+    }
+    
+    /* Boutons d'aiguilles techniques */
+    .btn-needle { 
+      background-color: #2c2c2c; /* Bouton sombre */
+      border: 1px solid #ff3333; /* Contour rouge vif */
+      color: #fff; /* Texte blanc */
+      border-radius: 10px; 
+      padding: 10px 6px; 
       font-size: 11px; 
       font-weight: bold; 
       flex: 1; 
       position: relative; 
+      text-transform: uppercase;
+      transition: background-color 0.2s;
     }
+    
+    .btn-needle:active {
+      background-color: #440000; /* Effet de clic rouge sombre */
+    }
+    
+    /* Badges de comptage rouges */
     .btn-needle span { 
       position: absolute; 
-      top: -8px; 
-      right: -4px; 
-      background: #ff0000; 
+      top: -10px; 
+      right: -5px; 
+      background-color: #ff0000; /* Rouge pur */
       color: white; 
       border-radius: 50%; 
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 10px; 
+      font-size: 11px; 
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
     }
     
+    /* Bouton de réinitialisation plus intégré */
     .btn-reset {
-      background: #f8f9fa;
-      border: 1px solid #ccc;
-      color: #666;
+      background-color: transparent;
+      border: 1px solid #555;
+      color: #888;
       font-size: 10px;
-      border-radius: 5px;
-      padding: 2px 8px;
-      margin-bottom: 10px;
+      border-radius: 6px;
+      padding: 4px 12px;
+      margin-bottom: 15px;
       text-transform: uppercase;
       font-weight: bold;
+      transition: all 0.2s;
+    }
+    
+    .btn-reset:hover {
+      border-color: #888;
+      color: #fff;
     }
 
-    .btn-main { width: 100%; background: #ff0000; color: white; border: none; font-weight: bold; font-size: 17px; padding: 10px; border-radius: 12px; box-shadow: 0 4px 15px rgba(255,0,0,0.3); }
-    .result-box { background: rgba(255, 255, 255, 0.3); border-radius: 20px; padding: 12px; margin-top: 15px; border: 1px solid rgba(255,0,0,0.3); text-align: center; }
-    .big { font-size: 24px; font-weight: bold; color: #ff0000; }
-    .highlight { color: #ff0000; font-weight: bold; }
-    .good { color: #00b050; font-weight: bold; }
-    .bad { color: #ff0000; font-weight: bold; }
+    /* Gros bouton Calculer */
+    .btn-main { 
+      width: 100%; 
+      background-color: #ff0000; /* Rouge pur */
+      color: white; 
+      border: none; 
+      font-weight: bold; 
+      font-size: 18px; 
+      padding: 12px; 
+      border-radius: 12px; 
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(255,0,0,0.3);
+      transition: all 0.2s;
+    }
+    
+    .btn-main:active {
+      background-color: #cc0000;
+      transform: translateY(1px);
+    }
+
+    /* Bloc de résultat */
+    .result-box { 
+      background-color: #2c2c2c; /* Fond sombre */
+      border-radius: 20px; 
+      padding: 15px; 
+      margin-top: 20px; 
+      border: 1px solid #444; 
+      text-align: center; 
+    }
+    
+    /* Grand temps total */
+    .big { 
+      font-size: 32px; 
+      font-weight: bold; 
+      color: #ff3333; /* Rouge vif pour le résultat */
+    }
+    
+    /* Info de fin et verdict */
+    .highlight { 
+      color: #fff; /* Texte blanc pour l'heure de fin */
+      font-weight: bold; 
+    }
+    
+    /* Verdict coloré (👍/🚫) */
+    .good { 
+      color: #00e676; /* Vert vif */
+      font-weight: bold; 
+    }
+    .bad { 
+      color: #ff3333; /* Rouge vif */
+      font-weight: bold; 
+    }
+    
+    /* Séparateur pointillé rouge */
+    .result-divider {
+      border-top: 1px dotted #ff3333; 
+      padding-top: 10px;
+      margin-top: 10px;
+    }
   </style>
 </head>
 
 <body>
 <div class="container">
   <div class="card">
-    <h5 class="text-center mb-3" style="color:#ff0000; font-weight: 900;">⚙️ CALCULATEUR DMV</h5>
+    <h5 class="text-center mb-4" style="color:#ff3333; font-weight: 900; letter-spacing: 1px;">⚙️ CALCULATEUR DMV</h5>
 
     <div class="mb-2">
       <label class="form-label">Nombre TOTAL de blocs</label>
@@ -74,14 +190,14 @@
       <input id="blocksTwoFiles" type="number" class="form-control" placeholder="Ex: 4">
     </div>
 
-    <div class="mb-3">
+    <div class="mb-4">
       <label class="form-label">Cadence actuelle (sec/bloc)</label>
       <input id="cadence" type="number" class="form-control" placeholder="Ex: 93">
     </div>
 
-    <div class="d-flex gap-2 mb-1 px-1">
-      <button class="btn-needle" onclick="addNeedle('filer')">Aiguille FILER (+2m) <span id="countFiler">0</span></button>
-      <button class="btn-needle" onclick="addNeedle('percer')">Aiguille PERCER (+5m) <span id="countPercer">0</span></button>
+    <div class="d-flex gap-3 mb-2 px-1">
+      <button class="btn-needle" onclick="addNeedle('filer')">Aiguille FILER<br>(+2min) <span id="countFiler">0</span></button>
+      <button class="btn-needle" onclick="addNeedle('percer')">Aiguille PERCER<br>(+5min) <span id="countPercer">0</span></button>
     </div>
     
     <div class="text-center">
@@ -95,87 +211,90 @@
 </div>
 
 <script>
-let needles = { filer: 0, percer: 0 };
+  //---------------------------------------------------------
+  // CODE JAVASCRIPT ORIGINAL - NON MODIFIÉ
+  //---------------------------------------------------------
+  let needles = { filer: 0, percer: 0 };
 
-function addNeedle(type) {
-  needles[type]++;
-  document.getElementById('count' + type.charAt(0).toUpperCase() + type.slice(1)).innerText = needles[type];
-}
+  function addNeedle(type) {
+    needles[type]++;
+    document.getElementById('count' + type.charAt(0).toUpperCase() + type.slice(1)).innerText = needles[type];
+  }
 
-function resetNeedles() {
-  needles = { filer: 0, percer: 0 };
-  document.getElementById('countFiler').innerText = "0";
-  document.getElementById('countPercer').innerText = "0";
-  // On cache le résultat s'il était affiché pour forcer un nouveau calcul
-  document.getElementById("resultat").style.display = "none";
-}
+  function resetNeedles() {
+    needles = { filer: 0, percer: 0 };
+    document.getElementById('countFiler').innerText = "0";
+    document.getElementById('countPercer').innerText = "0";
+    document.getElementById("resultat").style.display = "none";
+  }
 
-function formatTemps(seconds) {
-  let h = Math.floor(seconds / 3600);
-  let m = Math.floor((seconds % 3600) / 60);
-  let s = Math.floor(seconds % 60);
-  return (h > 0 ? h + "h " : "") + (m > 0 ? m + "min " : "") + s + "s";
-}
+  function formatTemps(seconds) {
+    let h = Math.floor(seconds / 3600);
+    let m = Math.floor((seconds % 3600) / 60);
+    let s = Math.floor(seconds % 60);
+    return (h > 0 ? h + "h " : "") + (m > 0 ? m + "min " : "") + s + "s";
+  }
 
-function getFinPoste(now) {
-  let h = now.getHours();
-  let fin = new Date(now);
-  if (h >= 5 && h < 13) fin.setHours(13, 0, 0, 0);
-  else if (h >= 13 && h < 21) fin.setHours(21, 0, 0, 0);
-  else if (h >= 21) { fin.setDate(fin.getDate()+1); fin.setHours(5,0,0,0); }
-  else fin.setHours(5,0,0,0);
-  return fin;
-}
+  function getFinPoste(now) {
+    let h = now.getHours();
+    let fin = new Date(now);
+    if (h >= 5 && h < 13) fin.setHours(13, 0, 0, 0);
+    else if (h >= 13 && h < 21) fin.setHours(21, 0, 0, 0);
+    else if (h >= 21) { fin.setDate(fin.getDate()+1); fin.setHours(5,0,0,0); }
+    else fin.setHours(5,0,0,0);
+    return fin;
+  }
 
-function calculer() {
-  let total = Number(document.getElementById("totalBlocks").value) || 0;
-  let blocksTwo = Number(document.getElementById("blocksTwoFiles").value) || 0;
-  let cadence = Number(document.getElementById("cadence").value);
-  
-  if (!cadence || cadence <= 0) return;
-
-  let blocsSolo = total - blocksTwo;
-  let pasDouble = Math.ceil(blocksTwo / 2);
-  let pasTotal = blocsSolo + pasDouble;
-
-  let tempsBlocs = pasTotal * cadence;
-  let tempsAiguilles = (needles.filer * 120) + (needles.percer * 300);
-  let totalSeconds = tempsBlocs + tempsAiguilles;
-
-  let now = new Date();
-  let fin = new Date(now.getTime() + totalSeconds * 1000);
-  let finPoste = getFinPoste(now);
-  let objectif = new Date(finPoste.getTime() - 10*60*1000);
-  let restantSec = (objectif - now) / 1000;
-  
-  let cadenceCible = restantSec > 0 ? (restantSec - tempsAiguilles) / pasTotal : 0;
-  let pasMaxPossible = restantSec > 0 ? Math.floor((restantSec - tempsAiguilles) / cadence) : 0;
-  
-  let isSlow = cadence > cadenceCible;
-
-  let resDiv = document.getElementById("resultat");
-  resDiv.style.display = "block";
-  resDiv.innerHTML = `
-    <div class="big">${formatTemps(totalSeconds)}</div>
-    <div style="font-size:12px; color:#666; margin-bottom:8px;">Aiguilles : +${formatTemps(tempsAiguilles)}</div>
+  function calculer() {
+    let total = Number(document.getElementById("totalBlocks").value) || 0;
+    let blocksTwo = Number(document.getElementById("blocksTwoFiles").value) || 0;
+    let cadence = Number(document.getElementById("cadence").value);
     
-    <div style="border-top: 1px dotted #ff0000; padding-top:8px;">
-        Fin : <span class="highlight">${fin.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
-    </div>
+    if (!cadence || cadence <= 0) return;
 
-    <div class="my-2" style="font-size:14px;">
-        Capacité max : <span class="highlight" style="font-size:18px;">${pasMaxPossible} blocs</span>
-    </div>
+    let blocsSolo = total - blocksTwo;
+    let pasDouble = Math.ceil(blocksTwo / 2);
+    let pasTotal = blocsSolo + pasDouble;
 
-    <div style="font-size:13px; opacity:0.8;">
-        Cadence cible : <span class="highlight">${cadenceCible > 0 ? cadenceCible.toFixed(2) : "---"} s/b</span>
-    </div>
+    let tempsBlocs = pasTotal * cadence;
+    let tempsAiguilles = (needles.filer * 120) + (needles.percer * 300);
+    let totalSeconds = tempsBlocs + tempsAiguilles;
 
-    <div class="mt-2 ${isSlow?'bad':'good'}">
-      ${isSlow ? '🚫 Trop lent' : '👍 À l’heure'}
-    </div>
-  `;
-}
+    let now = new Date();
+    let fin = new Date(now.getTime() + totalSeconds * 1000);
+    let finPoste = getFinPoste(now);
+    let objectif = new Date(finPoste.getTime() - 10*60*1000);
+    let restantSec = (objectif - now) / 1000;
+    
+    let cadenceCible = restantSec > 0 ? (restantSec - tempsAiguilles) / pasTotal : 0;
+    let pasMaxPossible = restantSec > 0 ? Math.floor((restantSec - tempsAiguilles) / cadence) : 0;
+    
+    let isSlow = cadence > cadenceCible;
+
+    let resDiv = document.getElementById("resultat");
+    resDiv.style.display = "block";
+    // AJUSTEMENT DES CLASSES HTML POUR LE NOUVEAU DESIGN
+    resDiv.innerHTML = `
+      <div class="big">${formatTemps(totalSeconds)}</div>
+      <div style="font-size:12px; color:#aaa; margin-bottom:8px;">Aiguilles : +${formatTemps(tempsAiguilles)}</div>
+      
+      <div class="result-divider">
+          Fin : <span class="highlight">${fin.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+      </div>
+
+      <div class="my-2" style="font-size:14px; color:#aaa;">
+          Capacité max : <span class="highlight" style="font-size:18px;">${pasMaxPossible} blocs</span>
+      </div>
+
+      <div style="font-size:13px; color:#aaa;">
+          Cadence cible : <span class="highlight">${cadenceCible > 0 ? cadenceCible.toFixed(2) : "---"} s/b</span>
+      </div>
+
+      <div class="mt-2 ${isSlow?'bad':'good'}">
+        ${isSlow ? '🚫 Trop lent' : '👍 À l’heure'}
+      </div>
+    `;
+  }
 </script>
 </body>
 </html>
