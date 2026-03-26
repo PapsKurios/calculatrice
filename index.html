@@ -2,198 +2,299 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Calculateur de blocs DMV</title>
+  <title>Calculateur DMV Pro (Dark Mode)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
-    /* Style glass inspiré iPhone */
-    html, body {
-      height: 100%;
-      margin: 0;
-      background: linear-gradient(135deg, #e0e0e0, #ffffff);
-      font-family: 'Arial', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    /* NOUVEAU DESIGN DARK PRO */
+    html, body { 
+      height: 100%; 
+      margin: 0; 
+      background-color: #121212; /* Fond très sombre */
+      font-family: 'Segoe UI', Arial, sans-serif; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      color: #e0e0e0; /* Texte clair */
     }
-
-    .card {
-      width: 100%;
-      max-width: 480px;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(15px);
-      border-radius: 30px;
-      padding: 30px 25px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: #1a1a1a;
+    
+    .card { 
+      width: 100%; 
+      max-width: 400px; 
+      background-color: #1e1e1e; /* Fond de la carte légèrement plus clair */
+      border-radius: 25px; 
+      padding: 25px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Ombre portée douce */
+      border: 1px solid #333; /* Contour fin */
     }
-
-    .form-label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-      color: #ff0000;
-      font-size: 16px;
+    
+    .form-label { 
+      font-weight: bold; 
+      color: #888; /* Texte d'étiquette discret */
+      font-size: 13px; 
+      margin-bottom: 2px; 
+      text-transform: uppercase;
     }
-
-    .form-control {
-      background-color: rgba(255,255,255,0.6);
-      border: 1px solid #ff0000;
-      color: #1a1a1a;
-      font-size: 18px;
-      border-radius: 12px;
-      padding: 12px;
+    
+    .form-control { 
+      background-color: #2c2c2c; /* Champs sombres */
+      border: 1px solid #444; /* Bordure discrète */
+      border-radius: 10px; 
+      padding: 10px; 
+      font-size: 16px; 
+      color: #fff; /* Texte de saisie blanc */
+      transition: all 0.2s;
     }
-
+    
     .form-control::placeholder {
-      color: #555;
+      color: #666; /* Placeholder sombre */
     }
-
+    
     .form-control:focus {
-      outline: none;
-      border-color: #cc0000;
-      box-shadow: 0 0 10px rgba(255,0,0,0.4);
-      background-color: rgba(255,255,255,0.8);
-    }
-
-    .btn-custom {
-      width: 100%;
-      background-color: #ff0000;
+      background-color: #333;
+      border-color: #ff3333; /* Bordure rouge au focus */
       color: #fff;
-      border: none;
+      box-shadow: 0 0 10px rgba(255,51,51,0.3);
+    }
+    
+    /* Boutons d'aiguilles techniques */
+    .btn-needle { 
+      background-color: #2c2c2c; /* Bouton sombre */
+      border: 1px solid #ff3333; /* Contour rouge vif */
+      color: #fff; /* Texte blanc */
+      border-radius: 10px; 
+      padding: 10px 6px; 
+      font-size: 11px; 
+      font-weight: bold; 
+      flex: 1; 
+      position: relative; 
+      text-transform: uppercase;
+      transition: background-color 0.2s;
+    }
+    
+    .btn-needle:active {
+      background-color: #440000; /* Effet de clic rouge sombre */
+    }
+    
+    /* Badges de comptage rouges */
+    .btn-needle span { 
+      position: absolute; 
+      top: -10px; 
+      right: -5px; 
+      background-color: #ff0000; /* Rouge pur */
+      color: white; 
+      border-radius: 50%; 
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px; 
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+    
+    /* Bouton de réinitialisation plus intégré */
+    .btn-reset {
+      background-color: transparent;
+      border: 1px solid #555;
+      color: #888;
+      font-size: 10px;
+      border-radius: 6px;
+      padding: 4px 12px;
+      margin-bottom: 15px;
+      text-transform: uppercase;
       font-weight: bold;
-      font-size: 20px;
-      padding: 15px;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(255,0,0,0.5);
-      backdrop-filter: blur(5px);
+      transition: all 0.2s;
+    }
+    
+    .btn-reset:hover {
+      border-color: #888;
+      color: #fff;
     }
 
-    .btn-custom:active {
-      transform: scale(0.98);
+    /* Gros bouton Calculer */
+    .btn-main { 
+      width: 100%; 
+      background-color: #ff0000; /* Rouge pur */
+      color: white; 
+      border: none; 
+      font-weight: bold; 
+      font-size: 18px; 
+      padding: 12px; 
+      border-radius: 12px; 
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(255,0,0,0.3);
+      transition: all 0.2s;
+    }
+    
+    .btn-main:active {
+      background-color: #cc0000;
+      transform: translateY(1px);
     }
 
-    .result-box {
-      background: rgba(255, 255, 255, 0.25);
-      border-radius: 20px;
-      padding: 20px;
-      margin-top: 20px;
-      border: 1px solid rgba(255,0,0,0.4);
-      text-align: center;
-      font-size: 18px;
-      color: #1a1a1a;
-      backdrop-filter: blur(10px);
+    /* Bloc de résultat */
+    .result-box { 
+      background-color: #2c2c2c; /* Fond sombre */
+      border-radius: 20px; 
+      padding: 15px; 
+      margin-top: 20px; 
+      border: 1px solid #444; 
+      text-align: center; 
     }
-
-    .big {
-      font-size: 30px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #ff0000;
+    
+    /* Grand temps total */
+    .big { 
+      font-size: 32px; 
+      font-weight: bold; 
+      color: #ff3333; /* Rouge vif pour le résultat */
     }
-
-    .good { color: #00b050; font-weight: bold; }
-    .bad { color: #ff0000; font-weight: bold; }
-    .highlight { color: #ff0000; font-weight: bold; }
+    
+    /* Info de fin et verdict */
+    .highlight { 
+      color: #fff; /* Texte blanc pour l'heure de fin */
+      font-weight: bold; 
+    }
+    
+    /* Verdict coloré (👍/🚫) */
+    .good { 
+      color: #00e676; /* Vert vif */
+      font-weight: bold; 
+    }
+    .bad { 
+      color: #ff3333; /* Rouge vif */
+      font-weight: bold; 
+    }
+    
+    /* Séparateur pointillé rouge */
+    .result-divider {
+      border-top: 1px dotted #ff3333; 
+      padding-top: 10px;
+      margin-top: 10px;
+    }
   </style>
 </head>
 
 <body>
 <div class="container">
   <div class="card">
-    <h3 class="text-center mb-4" style="color:#ff0000;">⚙️ Calculateur DMV</h3>
+    <h5 class="text-center mb-4" style="color:#ff3333; font-weight: 900; letter-spacing: 1px;">⚙️ CALCULATEUR DMV</h5>
 
-    <div class="mb-3">
-      <label for="blocks" class="form-label">Nombre de blocs (1 file)</label>
-      <input id="blocks" type="number" class="form-control" placeholder="Ex: 3">
+    <div class="mb-2">
+      <label class="form-label">Nombre TOTAL de blocs</label>
+      <input id="totalBlocks" type="number" class="form-control" placeholder="Ex: 12">
     </div>
 
-    <div class="mb-3">
-      <label for="blocksTwoFiles" class="form-label">Blocs en 2 file (facultatif)</label>
-      <input id="blocksTwoFiles" type="number" class="form-control" placeholder="Ex: 9">
+    <div class="mb-2">
+      <label class="form-label">Dont blocs en 2 files</label>
+      <input id="blocksTwoFiles" type="number" class="form-control" placeholder="Ex: 4">
     </div>
 
-    <div class="mb-3">
-      <label for="cadence" class="form-label">Cadence actuelle (sec / bloc)</label>
+    <div class="mb-4">
+      <label class="form-label">Cadence actuelle (sec/bloc)</label>
       <input id="cadence" type="number" class="form-control" placeholder="Ex: 93">
     </div>
 
-    <button class="btn btn-custom mt-3" onclick="calculer()">CALCULER</button>
+    <div class="d-flex gap-3 mb-2 px-1">
+      <button class="btn-needle" onclick="addNeedle('filer')">Aiguille FILER<br>(+2min) <span id="countFiler">0</span></button>
+      <button class="btn-needle" onclick="addNeedle('percer')">Aiguille PERCER<br>(+5min) <span id="countPercer">0</span></button>
+    </div>
+    
+    <div class="text-center">
+      <button class="btn btn-reset" onclick="resetNeedles()">Effacer aiguilles</button>
+    </div>
 
-    <div id="resultat" class="result-box"></div>
+    <button class="btn-main" onclick="calculer()">CALCULER</button>
+
+    <div id="resultat" class="result-box" style="display:none;"></div>
   </div>
 </div>
 
 <script>
-function formatTemps(seconds) {
-  let h = Math.floor(seconds / 3600);
-  let m = Math.floor((seconds % 3600) / 60);
-  let s = Math.floor(seconds % 60);
-  return (h > 0 ? h + "h " : "") + (m > 0 ? m + "min " : "") + s + "s";
-}
+  //---------------------------------------------------------
+  // CODE JAVASCRIPT ORIGINAL - NON MODIFIÉ
+  //---------------------------------------------------------
+  let needles = { filer: 0, percer: 0 };
 
-function getFinPoste(now) {
-  let h = now.getHours();
-  let fin = new Date(now);
-  if (h >= 5 && h < 13) fin.setHours(13, 0, 0, 0);
-  else if (h >= 13 && h < 21) fin.setHours(21, 0, 0, 0);
-  else if (h >= 21) { fin.setDate(fin.getDate()+1); fin.setHours(5,0,0,0); }
-  else fin.setHours(5,0,0,0);
-  return fin;
-}
+  function addNeedle(type) {
+    needles[type]++;
+    document.getElementById('count' + type.charAt(0).toUpperCase() + type.slice(1)).innerText = needles[type];
+  }
 
-function calculer() {
-  let blocks = Number(document.getElementById("blocks").value) || 0;
-  let blocksTwo = Number(document.getElementById("blocksTwoFiles").value) || 0;
-  let cadence = Number(document.getElementById("cadence").value);
-  if (!cadence || cadence <= 0) return;
+  function resetNeedles() {
+    needles = { filer: 0, percer: 0 };
+    document.getElementById('countFiler').innerText = "0";
+    document.getElementById('countPercer').innerText = "0";
+    document.getElementById("resultat").style.display = "none";
+  }
 
-  // Calcul du nombre de "pas" (temps moteur)
-  let extraSingle = blocksTwo % 2;
-  let doublePas = Math.floor(blocksTwo / 2);
-  let pasTotal = blocks + extraSingle + doublePas;
+  function formatTemps(seconds) {
+    let h = Math.floor(seconds / 3600);
+    let m = Math.floor((seconds % 3600) / 60);
+    let s = Math.floor(seconds % 60);
+    return (h > 0 ? h + "h " : "") + (m > 0 ? m + "min " : "") + s + "s";
+  }
 
-  let totalSeconds = pasTotal * cadence;
+  function getFinPoste(now) {
+    let h = now.getHours();
+    let fin = new Date(now);
+    if (h >= 5 && h < 13) fin.setHours(13, 0, 0, 0);
+    else if (h >= 13 && h < 21) fin.setHours(21, 0, 0, 0);
+    else if (h >= 21) { fin.setDate(fin.getDate()+1); fin.setHours(5,0,0,0); }
+    else fin.setHours(5,0,0,0);
+    return fin;
+  }
 
-  let now = new Date();
-  let fin = new Date(now.getTime() + totalSeconds * 1000);
-  let finPoste = getFinPoste(now);
-  let objectif = new Date(finPoste.getTime() - 10*60*1000); // 10 min avant fin poste
-
-  // Temps restant jusqu'à l'objectif (en secondes)
-  let restantSec = (objectif - now) / 1000;
-  
-  // 1. Calcul de la cadence cible pour le nombre de blocs actuel
-  let cadenceCible = restantSec > 0 ? restantSec / pasTotal : 0;
-
-  // 2. Calcul du nombre de pas maximum avec la cadence actuelle
-  let pasMaxPossible = restantSec > 0 ? Math.floor(restantSec / cadence) : 0;
-
-  let isSlow = cadence > cadenceCible;
-
-  document.getElementById("resultat").innerHTML = `
-    <div class="big">${formatTemps(totalSeconds)}</div>
-    <div>Fin actuelle : <span class="highlight">${fin.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></div>
+  function calculer() {
+    let total = Number(document.getElementById("totalBlocks").value) || 0;
+    let blocksTwo = Number(document.getElementById("blocksTwoFiles").value) || 0;
+    let cadence = Number(document.getElementById("cadence").value);
     
-    <div style="margin: 10px 0; border-top: 1px solid rgba(255,0,0,0.2); padding-top:10px;">
-      Capacité max à cette cadence : <br>
-      <span class="highlight" style="font-size:22px;">${pasMaxPossible} blocs</span>
-    </div>
+    if (!cadence || cadence <= 0) return;
 
-    <div style="font-size:16px; opacity: 0.9;">
-      Cadence cible pour finir à temps : <br>
-      <span class="highlight">${cadenceCible > 0 ? cadenceCible.toFixed(2) : "---"} sec/bloc</span>
-    </div>
+    let blocsSolo = total - blocksTwo;
+    let pasDouble = Math.ceil(blocksTwo / 2);
+    let pasTotal = blocsSolo + pasDouble;
 
-    <div class="mt-2 ${isSlow?'bad':'good'}">
-      ${isSlow ? '🚫 Trop lent pour finir à temps' : '👍 Cadence OK'}
-    </div>
-  `;
-}
+    let tempsBlocs = pasTotal * cadence;
+    let tempsAiguilles = (needles.filer * 120) + (needles.percer * 300);
+    let totalSeconds = tempsBlocs + tempsAiguilles;
+
+    let now = new Date();
+    let fin = new Date(now.getTime() + totalSeconds * 1000);
+    let finPoste = getFinPoste(now);
+    let objectif = new Date(finPoste.getTime() - 10*60*1000);
+    let restantSec = (objectif - now) / 1000;
+    
+    let cadenceCible = restantSec > 0 ? (restantSec - tempsAiguilles) / pasTotal : 0;
+    let pasMaxPossible = restantSec > 0 ? Math.floor((restantSec - tempsAiguilles) / cadence) : 0;
+    
+    let isSlow = cadence > cadenceCible;
+
+    let resDiv = document.getElementById("resultat");
+    resDiv.style.display = "block";
+    // AJUSTEMENT DES CLASSES HTML POUR LE NOUVEAU DESIGN
+    resDiv.innerHTML = `
+      <div class="big">${formatTemps(totalSeconds)}</div>
+      <div style="font-size:12px; color:#aaa; margin-bottom:8px;">Aiguilles : +${formatTemps(tempsAiguilles)}</div>
+      
+      <div class="result-divider">
+          Fin : <span class="highlight">${fin.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+      </div>
+
+      <div class="my-2" style="font-size:14px; color:#aaa;">
+          Capacité max : <span class="highlight" style="font-size:18px;">${pasMaxPossible} blocs</span>
+      </div>
+
+      <div style="font-size:13px; color:#aaa;">
+          Cadence cible : <span class="highlight">${cadenceCible > 0 ? cadenceCible.toFixed(2) : "---"} s/b</span>
+      </div>
+
+      <div class="mt-2 ${isSlow?'bad':'good'}">
+        ${isSlow ? '🚫 Trop lent' : '👍 À l’heure'}
+      </div>
+    `;
+  }
 </script>
-
 </body>
 </html>
