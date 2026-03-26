@@ -7,166 +7,115 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
-    /* NOUVEAU DESIGN DARK PRO */
+    /* DESIGN DARK PRO OPTIMISÉ MOBILE */
     html, body { 
       height: 100%; 
       margin: 0; 
-      background-color: #121212; /* Fond très sombre */
-      font-family: 'Segoe UI', Arial, sans-serif; 
+      background-color: #121212; 
+      font-family: 'Segoe UI', Helvetica, Arial, sans-serif; 
       display: flex; 
       justify-content: center; 
-      align-items: center; 
-      color: #e0e0e0; /* Texte clair */
+      align-items: flex-start; /* Aligné en haut pour éviter de défiler sur petit écran */
+      color: #e0e0e0; 
+      padding-top: 10px;
     }
     
     .card { 
-      width: 100%; 
-      max-width: 400px; 
-      background-color: #1e1e1e; /* Fond de la carte légèrement plus clair */
-      border-radius: 25px; 
-      padding: 25px; 
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Ombre portée douce */
-      border: 1px solid #333; /* Contour fin */
+      width: 95%; /* Prend presque toute la largeur du tel */
+      max-width: 450px; 
+      background-color: #1e1e1e; 
+      border-radius: 20px; 
+      padding: 15px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+      border: 1px solid #333; 
     }
     
     .form-label { 
       font-weight: bold; 
-      color: #888; /* Texte d'étiquette discret */
-      font-size: 13px; 
-      margin-bottom: 2px; 
+      color: #888; 
+      font-size: 12px; 
+      margin-bottom: 4px; 
       text-transform: uppercase;
     }
     
     .form-control { 
-      background-color: #2c2c2c; /* Champs sombres */
-      border: 1px solid #444; /* Bordure discrète */
-      border-radius: 10px; 
-      padding: 10px; 
+      background-color: #2c2c2c; 
+      border: 1px solid #444; 
+      border-radius: 8px; 
+      padding: 12px; /* Plus haut pour le doigt */
       font-size: 16px; 
-      color: #fff; /* Texte de saisie blanc */
-      transition: all 0.2s;
+      color: #fff; 
+      margin-bottom: 10px;
     }
     
-    .form-control::placeholder {
-      color: #666; /* Placeholder sombre */
-    }
-    
-    .form-control:focus {
-      background-color: #333;
-      border-color: #ff3333; /* Bordure rouge au focus */
-      color: #fff;
-      box-shadow: 0 0 10px rgba(255,51,51,0.3);
-    }
-    
-    /* Boutons d'aiguilles techniques */
+    /* Boutons d'aiguilles plus larges */
     .btn-needle { 
-      background-color: #2c2c2c; /* Bouton sombre */
-      border: 1px solid #ff3333; /* Contour rouge vif */
-      color: #fff; /* Texte blanc */
-      border-radius: 10px; 
-      padding: 10px 6px; 
-      font-size: 11px; 
+      background-color: #2c2c2c; 
+      border: 1px solid #ff3333; 
+      color: #fff; 
+      border-radius: 12px; 
+      padding: 15px 5px; /* Plus haut pour cliquer facilement */
+      font-size: 12px; 
       font-weight: bold; 
       flex: 1; 
       position: relative; 
-      text-transform: uppercase;
-      transition: background-color 0.2s;
     }
     
-    .btn-needle:active {
-      background-color: #440000; /* Effet de clic rouge sombre */
-    }
-    
-    /* Badges de comptage rouges */
     .btn-needle span { 
       position: absolute; 
-      top: -10px; 
+      top: -8px; 
       right: -5px; 
-      background-color: #ff0000; /* Rouge pur */
+      background-color: #ff0000; 
       color: white; 
       border-radius: 50%; 
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px; 
-      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+      font-size: 12px; 
+      border: 2px solid #1e1e1e;
     }
     
-    /* Bouton de réinitialisation plus intégré */
     .btn-reset {
       background-color: transparent;
-      border: 1px solid #555;
-      color: #888;
-      font-size: 10px;
+      border: 1px solid #444;
+      color: #666;
+      font-size: 11px;
       border-radius: 6px;
-      padding: 4px 12px;
-      margin-bottom: 15px;
+      padding: 6px 15px;
+      margin: 10px 0;
       text-transform: uppercase;
-      font-weight: bold;
-      transition: all 0.2s;
-    }
-    
-    .btn-reset:hover {
-      border-color: #888;
-      color: #fff;
     }
 
-    /* Gros bouton Calculer */
     .btn-main { 
       width: 100%; 
-      background-color: #ff0000; /* Rouge pur */
+      background-color: #ff0000; 
       color: white; 
       border: none; 
-      font-weight: bold; 
-      font-size: 18px; 
-      padding: 12px; 
-      border-radius: 12px; 
+      font-weight: 900; 
+      font-size: 20px; /* Écrit plus gros */
+      padding: 15px; 
+      border-radius: 15px; 
       text-transform: uppercase;
       box-shadow: 0 4px 15px rgba(255,0,0,0.3);
-      transition: all 0.2s;
-    }
-    
-    .btn-main:active {
-      background-color: #cc0000;
-      transform: translateY(1px);
     }
 
-    /* Bloc de résultat */
     .result-box { 
-      background-color: #2c2c2c; /* Fond sombre */
-      border-radius: 20px; 
-      padding: 15px; 
-      margin-top: 20px; 
+      background-color: #2c2c2c; 
+      border-radius: 15px; 
+      padding: 20px; 
+      margin-top: 15px; 
       border: 1px solid #444; 
       text-align: center; 
     }
     
-    /* Grand temps total */
     .big { 
-      font-size: 32px; 
+      font-size: 38px; /* Résultat bien visible */
       font-weight: bold; 
-      color: #ff3333; /* Rouge vif pour le résultat */
+      color: #ff3333; 
     }
     
-    /* Info de fin et verdict */
-    .highlight { 
-      color: #fff; /* Texte blanc pour l'heure de fin */
-      font-weight: bold; 
-    }
-    
-    /* Verdict coloré (👍/🚫) */
-    .good { 
-      color: #00e676; /* Vert vif */
-      font-weight: bold; 
-    }
-    .bad { 
-      color: #ff3333; /* Rouge vif */
-      font-weight: bold; 
-    }
-    
-    /* Séparateur pointillé rouge */
     .result-divider {
       border-top: 1px dotted #ff3333; 
       padding-top: 10px;
