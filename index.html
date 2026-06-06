@@ -2,299 +2,554 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Calculateur DMV Pro (Dark Mode)</title>
+  <title>Vais-je finir à l'heure ?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
-    /* NOUVEAU DESIGN DARK PRO */
-    html, body { 
-      height: 100%; 
-      margin: 0; 
-      background-color: #121212; /* Fond très sombre */
-      font-family: 'Segoe UI', Arial, sans-serif; 
-      display: flex; 
-      justify-content: center; 
-      align-items: center; 
-      color: #e0e0e0; /* Texte clair */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f0f0f; --surface: #181818; --surface2: #222222;
+      --border: #2e2e2e; --border2: #3a3a3a; --text: #f0ede8;
+      --muted: #888; --accent: #e8381a; --accent2: #ff5c3a;
+      --green: #00d97e; --yellow: #f5c518;
+      --mono: 'DM Mono', monospace; --display: 'Barlow Condensed', sans-serif;
     }
-    
-    .card { 
-      width: 100%; 
-      max-width: 400px; 
-      background-color: #1e1e1e; /* Fond de la carte légèrement plus clair */
-      border-radius: 25px; 
-      padding: 25px; 
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Ombre portée douce */
-      border: 1px solid #333; /* Contour fin */
+    html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: var(--mono); }
+    body { display: flex; justify-content: center; padding: 0; }
+    .app { width: 100%; max-width: 520px; min-height: 100dvh; display: flex; flex-direction: column; padding: 0 0 60px; }
+
+    /* HEADER */
+    .header { padding: 28px 24px 20px; border-bottom: 1px solid var(--border); }
+    .header-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+    .app-title { font-family: var(--display); font-weight: 900; font-size: 26px; letter-spacing: 1px; line-height: 1.1; text-transform: uppercase; }
+    .app-title span { color: var(--accent); }
+    .poste-badge { background: var(--surface2); border: 1px solid var(--border2); border-radius: 6px; padding: 6px 12px; text-align: right; }
+    .poste-name { font-family: var(--display); font-weight: 700; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
+    .poste-fin { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .poste-fin strong { color: var(--text); font-weight: 500; }
+    .clock-row { display: flex; align-items: center; gap: 8px; }
+    .clock-live { font-size: 22px; font-weight: 500; letter-spacing: 2px; color: var(--text); }
+    .clock-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
+    .time-remaining { margin-left: auto; font-size: 12px; color: var(--muted); }
+    .time-remaining strong { color: var(--yellow); font-weight: 500; }
+
+    /* CONTENT */
+    .content { flex: 1; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+    .section-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* INPUT */
+    .input-block { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .input-row { display: flex; align-items: center; padding: 14px 16px; gap: 12px; border-bottom: 1px solid var(--border); }
+    .input-row:last-child { border-bottom: none; }
+    .input-row-label { flex: 1; font-size: 13px; color: var(--muted); line-height: 1.3; }
+    .input-row-label strong { display: block; font-size: 14px; color: var(--text); font-weight: 500; margin-bottom: 1px; }
+    .input-right { display: flex; align-items: center; gap: 6px; }
+    input[type="number"] {
+      background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px;
+      color: var(--text); font-family: var(--mono); font-size: 18px; font-weight: 500;
+      width: 90px; padding: 8px 10px; text-align: right; outline: none;
+      transition: border-color 0.15s; -moz-appearance: textfield;
     }
-    
-    .form-label { 
-      font-weight: bold; 
-      color: #888; /* Texte d'étiquette discret */
-      font-size: 13px; 
-      margin-bottom: 2px; 
-      text-transform: uppercase;
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    input[type="number"]:focus { border-color: var(--accent); }
+    .unit { font-size: 11px; color: var(--muted); min-width: 30px; }
+
+    /* STEPPER */
+    .stepper { display: flex; align-items: center; gap: 6px; }
+    .stepper-val { font-size: 18px; font-weight: 500; width: 32px; text-align: center; }
+    .stepper-btn {
+      width: 34px; height: 34px; border-radius: 6px; border: 1px solid var(--border2);
+      background: var(--surface2); color: var(--text); font-size: 20px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; line-height: 1;
+      transition: background 0.1s; user-select: none;
     }
-    
-    .form-control { 
-      background-color: #2c2c2c; /* Champs sombres */
-      border: 1px solid #444; /* Bordure discrète */
-      border-radius: 10px; 
-      padding: 10px; 
-      font-size: 16px; 
-      color: #fff; /* Texte de saisie blanc */
-      transition: all 0.2s;
+    .stepper-btn:hover { background: var(--border); }
+    .stepper-btn:active { transform: scale(0.93); }
+    .stepper-btn.minus { color: var(--muted); }
+    .stepper-btn.plus { border-color: var(--accent); color: var(--accent); }
+
+    /* AIGUILLES */
+    .aiguilles-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .aiguille-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+    .aiguille-name { font-family: var(--display); font-weight: 700; font-size: 14px; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px; }
+    .aiguille-time { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+
+    /* BOUTON CALCULER */
+    .btn-calc {
+      width: 100%; background: var(--accent); color: white; border: none;
+      border-radius: 12px; padding: 16px; font-family: var(--display);
+      font-weight: 900; font-size: 22px; letter-spacing: 3px; text-transform: uppercase;
+      cursor: pointer; transition: background 0.15s, transform 0.1s;
     }
-    
-    .form-control::placeholder {
-      color: #666; /* Placeholder sombre */
+    .btn-calc:hover { background: var(--accent2); }
+    .btn-calc:active { transform: scale(0.98); }
+
+    /* RÉSULTAT */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-    
-    .form-control:focus {
-      background-color: #333;
-      border-color: #ff3333; /* Bordure rouge au focus */
-      color: #fff;
-      box-shadow: 0 0 10px rgba(255,51,51,0.3);
+    .result-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: none; }
+    .result-panel.visible { display: block; animation: slideIn 0.25s ease; }
+    .result-header { padding: 16px 20px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .result-total { font-family: var(--display); font-weight: 900; font-size: 48px; line-height: 1; color: var(--accent); letter-spacing: 1px; }
+    .result-fin-wrap { text-align: right; }
+    .result-fin-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+    .result-fin-time { font-family: var(--display); font-weight: 700; font-size: 28px; letter-spacing: 1px; color: var(--text); }
+    .result-fin-poste { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .result-fin-poste strong { color: var(--muted); }
+    .result-grid { display: grid; grid-template-columns: 1fr 1fr; }
+    .result-cell { padding: 14px 20px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .result-cell:nth-child(even) { border-right: none; }
+    .result-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .result-cell-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .result-cell-val { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: 0.5px; }
+    .result-cell-val.good { color: var(--green); }
+    .result-cell-val.warn { color: var(--yellow); }
+    .result-cell-val.bad { color: var(--accent); }
+    .verdict-bar { padding: 14px 20px; display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--border); }
+    .verdict-icon { font-size: 24px; }
+    .verdict-text { font-family: var(--display); font-weight: 700; font-size: 18px; letter-spacing: 1px; text-transform: uppercase; }
+    .verdict-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+    .verdict-bar.ok { border-color: var(--green); background: rgba(0,217,126,0.05); }
+    .verdict-bar.late { border-color: var(--accent); background: rgba(232,56,26,0.05); }
+    .verdict-bar.ok .verdict-text { color: var(--green); }
+    .verdict-bar.late .verdict-text { color: var(--accent); }
+
+    /* HISTORIQUE */
+    .histo-list { display: flex; flex-direction: column; gap: 8px; }
+    .histo-item {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;
+      animation: slideIn 0.2s ease;
     }
-    
-    /* Boutons d'aiguilles techniques */
-    .btn-needle { 
-      background-color: #2c2c2c; /* Bouton sombre */
-      border: 1px solid #ff3333; /* Contour rouge vif */
-      color: #fff; /* Texte blanc */
-      border-radius: 10px; 
-      padding: 10px 6px; 
-      font-size: 11px; 
-      font-weight: bold; 
-      flex: 1; 
-      position: relative; 
-      text-transform: uppercase;
-      transition: background-color 0.2s;
-    }
-    
-    .btn-needle:active {
-      background-color: #440000; /* Effet de clic rouge sombre */
-    }
-    
-    /* Badges de comptage rouges */
-    .btn-needle span { 
-      position: absolute; 
-      top: -10px; 
-      right: -5px; 
-      background-color: #ff0000; /* Rouge pur */
-      color: white; 
-      border-radius: 50%; 
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px; 
-      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-    }
-    
-    /* Bouton de réinitialisation plus intégré */
+    .histo-left { font-size: 12px; color: var(--muted); line-height: 1.6; }
+    .histo-left strong { color: var(--text); font-weight: 500; }
+    .histo-right { text-align: right; }
+    .histo-time { font-family: var(--display); font-weight: 700; font-size: 18px; color: var(--accent); }
+    .histo-verdict { font-size: 11px; margin-top: 2px; }
+    .histo-verdict.ok { color: var(--green); }
+    .histo-verdict.late { color: var(--accent); }
+    .histo-empty { font-size: 12px; color: var(--muted); text-align: center; padding: 12px 0; }
+
+    /* RESET */
     .btn-reset {
-      background-color: transparent;
-      border: 1px solid #555;
-      color: #888;
-      font-size: 10px;
-      border-radius: 6px;
-      padding: 4px 12px;
-      margin-bottom: 15px;
-      text-transform: uppercase;
-      font-weight: bold;
-      transition: all 0.2s;
+      background: none; border: 1px solid var(--border); color: var(--muted);
+      border-radius: 8px; padding: 8px 16px; font-family: var(--mono);
+      font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+      cursor: pointer; width: 100%; transition: border-color 0.15s, color 0.15s;
     }
-    
-    .btn-reset:hover {
-      border-color: #888;
-      color: #fff;
-    }
+    .btn-reset:hover { border-color: var(--border2); color: var(--text); }
 
-    /* Gros bouton Calculer */
-    .btn-main { 
-      width: 100%; 
-      background-color: #ff0000; /* Rouge pur */
-      color: white; 
-      border: none; 
-      font-weight: bold; 
-      font-size: 18px; 
-      padding: 12px; 
-      border-radius: 12px; 
-      text-transform: uppercase;
-      box-shadow: 0 4px 15px rgba(255,0,0,0.3);
-      transition: all 0.2s;
-    }
-    
-    .btn-main:active {
-      background-color: #cc0000;
-      transform: translateY(1px);
-    }
-
-    /* Bloc de résultat */
-    .result-box { 
-      background-color: #2c2c2c; /* Fond sombre */
-      border-radius: 20px; 
-      padding: 15px; 
-      margin-top: 20px; 
-      border: 1px solid #444; 
-      text-align: center; 
-    }
-    
-    /* Grand temps total */
-    .big { 
-      font-size: 32px; 
-      font-weight: bold; 
-      color: #ff3333; /* Rouge vif pour le résultat */
-    }
-    
-    /* Info de fin et verdict */
-    .highlight { 
-      color: #fff; /* Texte blanc pour l'heure de fin */
-      font-weight: bold; 
-    }
-    
-    /* Verdict coloré (👍/🚫) */
-    .good { 
-      color: #00e676; /* Vert vif */
-      font-weight: bold; 
-    }
-    .bad { 
-      color: #ff3333; /* Rouge vif */
-      font-weight: bold; 
-    }
-    
-    /* Séparateur pointillé rouge */
-    .result-divider {
-      border-top: 1px dotted #ff3333; 
-      padding-top: 10px;
-      margin-top: 10px;
+    /* DESKTOP */
+    @media (min-width: 600px) {
+      body { padding: 40px 20px; }
+      .app { min-height: auto; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+      .header { padding: 32px 32px 24px; }
+      .content { padding: 28px 32px; }
+      .app-title { font-size: 42px; }
     }
   </style>
 </head>
-
 <body>
-<div class="container">
-  <div class="card">
-    <h5 class="text-center mb-4" style="color:#ff3333; font-weight: 900; letter-spacing: 1px;">⚙️ CALCULATEUR DMV</h5>
+<div class="app">
 
-    <div class="mb-2">
-      <label class="form-label">Nombre TOTAL de blocs</label>
-      <input id="totalBlocks" type="number" class="form-control" placeholder="Ex: 12">
+  <div class="header">
+    <div class="header-top">
+      <div class="app-title">Vais-je finir<br><span>à l'heure ?</span></div>
+      <div class="poste-badge">
+        <div class="poste-name" id="posteName">—</div>
+        <div class="poste-fin">Fin : <strong id="posteFinHeure">—</strong></div>
+      </div>
+    </div>
+    <div class="clock-row">
+      <div class="clock-dot"></div>
+      <div class="clock-live" id="clockLive">00:00:00</div>
+      <div class="time-remaining" id="timeRemaining"></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- 1 FILE -->
+    <div>
+      <div class="section-label">Blocs 1 file</div>
+      <div class="input-block">
+        <div class="input-row">
+          <div class="input-row-label"><strong>Nombre de blocs</strong>1 bloc par pas</div>
+          <div class="input-right">
+            <input type="number" id="blocs1" min="0" placeholder="0">
+            <span class="unit">blocs</span>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="input-row-label"><strong>Cadence</strong>secondes par bloc</div>
+          <div class="input-right">
+            <input type="number" id="cad1" min="1" placeholder="90">
+            <span class="unit">s/b</span>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="mb-2">
-      <label class="form-label">Dont blocs en 2 files</label>
-      <input id="blocksTwoFiles" type="number" class="form-control" placeholder="Ex: 4">
+    <!-- 2 FILES -->
+    <div>
+      <div class="section-label">Blocs 2 files (optionnel)</div>
+      <div class="input-block">
+        <div class="input-row">
+          <div class="input-row-label"><strong>Nombre de blocs</strong>cadence différente</div>
+          <div class="input-right">
+            <input type="number" id="blocs2" min="0" placeholder="0">
+            <span class="unit">blocs</span>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="input-row-label"><strong>Cadence</strong>secondes par bloc</div>
+          <div class="input-right">
+            <input type="number" id="cad2" min="1" placeholder="70">
+            <span class="unit">s/b</span>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="mb-4">
-      <label class="form-label">Cadence actuelle (sec/bloc)</label>
-      <input id="cadence" type="number" class="form-control" placeholder="Ex: 93">
+    <!-- MONTAGES -->
+    <div>
+      <div class="section-label">Montages aiguilles</div>
+      <div class="aiguilles-grid">
+        <div class="aiguille-card">
+          <div class="aiguille-name">Presse à filer</div>
+          <div class="aiguille-time">+2 min par montage</div>
+          <div class="stepper">
+            <button class="stepper-btn minus" onclick="changeAiguille('filer',-1)">−</button>
+            <div class="stepper-val" id="valFiler">0</div>
+            <button class="stepper-btn plus" onclick="changeAiguille('filer',1)">+</button>
+          </div>
+        </div>
+        <div class="aiguille-card">
+          <div class="aiguille-name">Presse à percer</div>
+          <div class="aiguille-time">+5 min par montage</div>
+          <div class="stepper">
+            <button class="stepper-btn minus" onclick="changeAiguille('percer',-1)">−</button>
+            <div class="stepper-val" id="valPercer">0</div>
+            <button class="stepper-btn plus" onclick="changeAiguille('percer',1)">+</button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="d-flex gap-3 mb-2 px-1">
-      <button class="btn-needle" onclick="addNeedle('filer')">Aiguille FILER<br>(+2min) <span id="countFiler">0</span></button>
-      <button class="btn-needle" onclick="addNeedle('percer')">Aiguille PERCER<br>(+5min) <span id="countPercer">0</span></button>
-    </div>
-    
-    <div class="text-center">
-      <button class="btn btn-reset" onclick="resetNeedles()">Effacer aiguilles</button>
+    <!-- BOUTON -->
+    <button class="btn-calc" id="btnCalc" onclick="calculer()">Calculer</button>
+
+    <!-- RÉSULTAT -->
+    <div class="result-panel" id="resultPanel">
+      <div class="result-header">
+        <div>
+          <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Durée totale</div>
+          <div class="result-total" id="resTotalTemps">—</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;" id="resAiguillesLine"></div>
+        </div>
+        <div class="result-fin-wrap">
+          <div class="result-fin-label">Fin estimée</div>
+          <div class="result-fin-time" id="resFinHeure">—</div>
+          <div class="result-fin-poste" id="resFinPoste"></div>
+        </div>
+      </div>
+      <div class="result-grid">
+        <div class="result-cell">
+          <div class="result-cell-label">Total blocs</div>
+          <div class="result-cell-val" id="resBlocsTotal">—</div>
+        </div>
+        <div class="result-cell">
+          <div class="result-cell-label">Temps restant poste</div>
+          <div class="result-cell-val" id="resTempsPoste">—</div>
+        </div>
+        <div class="result-cell">
+          <div class="result-cell-label">Cadence cible 1 file</div>
+          <div class="result-cell-val" id="resCadCible">—</div>
+        </div>
+        <div class="result-cell">
+          <div class="result-cell-label">Blocs max faisables</div>
+          <div class="result-cell-val" id="resBlocsMax">—</div>
+        </div>
+      </div>
+      <div class="verdict-bar" id="verdictBar">
+        <div class="verdict-icon" id="verdictIcon">—</div>
+        <div>
+          <div class="verdict-text" id="verdictText">—</div>
+          <div class="verdict-sub" id="verdictSub">—</div>
+        </div>
+      </div>
     </div>
 
-    <button class="btn-main" onclick="calculer()">CALCULER</button>
+    <!-- HISTORIQUE -->
+    <div>
+      <div class="section-label" style="justify-content: space-between;">
+        <span style="display:flex;align-items:center;gap:8px;">Historique du poste<span style="flex:1;height:1px;background:var(--border);display:inline-block;width:40px;"></span></span>
+        <button onclick="resetHisto()" style="background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:3px 10px;font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Effacer</button>
+      </div>
+      <div class="histo-list" id="histoList">
+        <div class="histo-empty">Aucun calcul pour ce poste</div>
+      </div>
+    </div>
 
-    <div id="resultat" class="result-box" style="display:none;"></div>
+    <!-- RESET -->
+    <button class="btn-reset" onclick="resetAll()">Réinitialiser</button>
+
   </div>
 </div>
 
 <script>
-  //---------------------------------------------------------
-  // CODE JAVASCRIPT ORIGINAL - NON MODIFIÉ
-  //---------------------------------------------------------
-  let needles = { filer: 0, percer: 0 };
+  let aiguilles = { filer: 0, percer: 0 };
+  let histoPoste = [];
+  let dernierPosteNom = '';
 
-  function addNeedle(type) {
-    needles[type]++;
-    document.getElementById('count' + type.charAt(0).toUpperCase() + type.slice(1)).innerText = needles[type];
+  // SAUVEGARDE LOCALE
+  function sauvegarder() {
+    const data = {
+      blocs1: document.getElementById('blocs1').value,
+      cad1:   document.getElementById('cad1').value,
+      blocs2: document.getElementById('blocs2').value,
+      cad2:   document.getElementById('cad2').value,
+      aiguilles,
+    };
+    try { localStorage.setItem('dmv_valeurs', JSON.stringify(data)); } catch(e){}
   }
 
-  function resetNeedles() {
-    needles = { filer: 0, percer: 0 };
-    document.getElementById('countFiler').innerText = "0";
-    document.getElementById('countPercer').innerText = "0";
-    document.getElementById("resultat").style.display = "none";
+  function charger() {
+    try {
+      const raw = localStorage.getItem('dmv_valeurs');
+      if (!raw) return;
+      const d = JSON.parse(raw);
+      if (d.blocs1) document.getElementById('blocs1').value = d.blocs1;
+      if (d.cad1)   document.getElementById('cad1').value   = d.cad1;
+      if (d.blocs2) document.getElementById('blocs2').value = d.blocs2;
+      if (d.cad2)   document.getElementById('cad2').value   = d.cad2;
+      if (d.aiguilles) {
+        aiguilles = d.aiguilles;
+        document.getElementById('valFiler').textContent  = aiguilles.filer;
+        document.getElementById('valPercer').textContent = aiguilles.percer;
+      }
+    } catch(e){}
   }
 
-  function formatTemps(seconds) {
-    let h = Math.floor(seconds / 3600);
-    let m = Math.floor((seconds % 3600) / 60);
-    let s = Math.floor(seconds % 60);
-    return (h > 0 ? h + "h " : "") + (m > 0 ? m + "min " : "") + s + "s";
+  // HORLOGE
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('clockLive').textContent = h+':'+m+':'+s;
+
+    const poste = getPoste(now);
+    document.getElementById('posteName').textContent    = poste.nom;
+    document.getElementById('posteFinHeure').textContent = poste.finStr;
+
+    // Si changement de poste → vider historique
+    if (dernierPosteNom && dernierPosteNom !== poste.nom) {
+      histoPoste = [];
+      renderHisto();
+    }
+    dernierPosteNom = poste.nom;
+
+    const resteSec = Math.max(0, (poste.fin - now) / 1000);
+    const rh = Math.floor(resteSec / 3600);
+    const rm = Math.floor((resteSec % 3600) / 60);
+    const txt = rh > 0 ? rh+'h'+String(rm).padStart(2,'0') : rm+'min';
+    document.getElementById('timeRemaining').innerHTML = 'Fin dans <strong>'+txt+'</strong>';
   }
 
-  function getFinPoste(now) {
-    let h = now.getHours();
-    let fin = new Date(now);
-    if (h >= 5 && h < 13) fin.setHours(13, 0, 0, 0);
-    else if (h >= 13 && h < 21) fin.setHours(21, 0, 0, 0);
-    else if (h >= 21) { fin.setDate(fin.getDate()+1); fin.setHours(5,0,0,0); }
-    else fin.setHours(5,0,0,0);
-    return fin;
+  function getPoste(now) {
+    const h = now.getHours(), min = now.getMinutes();
+    let fin = new Date(now), nom = '';
+    if (h >= 5 && (h < 12 || (h === 12 && min < 50))) {
+      nom = 'Poste matin'; fin.setHours(12,50,0,0);
+    } else if (h >= 13 && (h < 20 || (h === 20 && min < 50))) {
+      nom = 'Poste après-midi'; fin.setHours(20,50,0,0);
+    } else {
+      nom = 'Poste nuit';
+      fin = new Date(now);
+      if (h >= 21 || h < 5) { if (h >= 21) fin.setDate(fin.getDate()+1); }
+      fin.setHours(4,50,0,0);
+    }
+    const fh = String(fin.getHours()).padStart(2,'0');
+    const fm = String(fin.getMinutes()).padStart(2,'0');
+    return { nom, fin, finStr: fh+':'+fm };
   }
 
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // AIGUILLES
+  function changeAiguille(type, delta) {
+    aiguilles[type] = Math.max(0, aiguilles[type] + delta);
+    document.getElementById('val'+type.charAt(0).toUpperCase()+type.slice(1)).textContent = aiguilles[type];
+    if (navigator.vibrate) navigator.vibrate(30);
+    sauvegarder();
+  }
+
+  // Sauvegarder à chaque saisie
+  ['blocs1','cad1','blocs2','cad2'].forEach(id => {
+    document.getElementById(id).addEventListener('input', sauvegarder);
+  });
+
+  // Calculer avec Entrée
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') calculer(); });
+
+  function formatTemps(sec) {
+    sec = Math.round(sec);
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    if (h > 0) return h+'h '+String(m).padStart(2,'0')+'min';
+    if (m > 0) return m+'min '+String(s).padStart(2,'0')+'s';
+    return s+'s';
+  }
+
+  // HISTORIQUE
+  function renderHisto() {
+    const el = document.getElementById('histoList');
+    if (!histoPoste.length) {
+      el.innerHTML = '<div class="histo-empty">Aucun calcul pour ce poste</div>';
+      return;
+    }
+    el.innerHTML = histoPoste.slice().reverse().map(e => `
+      <div class="histo-item">
+        <div class="histo-left">
+          <strong>${e.heure}</strong><br>
+          ${e.blocs1 ? e.blocs1+'b×'+e.cad1+'s' : ''}${e.blocs1 && e.blocs2 ? ' + ' : ''}${e.blocs2 ? e.blocs2+'b×'+e.cad2+'s (2f)' : ''}
+          ${e.aig ? '<br>'+e.aig : ''}
+        </div>
+        <div class="histo-right">
+          <div class="histo-time">${e.duree}</div>
+          <div class="histo-verdict ${e.ok ? 'ok' : 'late'}">${e.ok ? '✓ Dans les temps' : '⚠ En retard'}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // CALCUL PRINCIPAL
   function calculer() {
-    let total = Number(document.getElementById("totalBlocks").value) || 0;
-    let blocksTwo = Number(document.getElementById("blocksTwoFiles").value) || 0;
-    let cadence = Number(document.getElementById("cadence").value);
-    
-    if (!cadence || cadence <= 0) return;
+    // Fermer clavier mobile
+    document.activeElement && document.activeElement.blur();
 
-    let blocsSolo = total - blocksTwo;
-    let pasDouble = Math.ceil(blocksTwo / 2);
-    let pasTotal = blocsSolo + pasDouble;
+    const blocs1 = parseFloat(document.getElementById('blocs1').value) || 0;
+    const cad1   = parseFloat(document.getElementById('cad1').value)   || 0;
+    const blocs2 = parseFloat(document.getElementById('blocs2').value) || 0;
+    const cad2   = parseFloat(document.getElementById('cad2').value)   || 0;
 
-    let tempsBlocs = pasTotal * cadence;
-    let tempsAiguilles = (needles.filer * 120) + (needles.percer * 300);
-    let totalSeconds = tempsBlocs + tempsAiguilles;
+    if (blocs1 === 0 && blocs2 === 0) return;
 
-    let now = new Date();
-    let fin = new Date(now.getTime() + totalSeconds * 1000);
-    let finPoste = getFinPoste(now);
-    let objectif = new Date(finPoste.getTime() - 10*60*1000);
-    let restantSec = (objectif - now) / 1000;
-    
-    let cadenceCible = restantSec > 0 ? (restantSec - tempsAiguilles) / pasTotal : 0;
-    let pasMaxPossible = restantSec > 0 ? Math.floor((restantSec - tempsAiguilles) / cadence) : 0;
-    
-    let isSlow = cadence > cadenceCible;
+    const temps1 = blocs1 * cad1;
+    const temps2 = blocs2 * cad2;
+    const tempsAiguilles = (aiguilles.filer * 120) + (aiguilles.percer * 300);
+    const totalSec = temps1 + temps2 + tempsAiguilles;
+    const totalBlocs = blocs1 + blocs2;
 
-    let resDiv = document.getElementById("resultat");
-    resDiv.style.display = "block";
-    // AJUSTEMENT DES CLASSES HTML POUR LE NOUVEAU DESIGN
-    resDiv.innerHTML = `
-      <div class="big">${formatTemps(totalSeconds)}</div>
-      <div style="font-size:12px; color:#aaa; margin-bottom:8px;">Aiguilles : +${formatTemps(tempsAiguilles)}</div>
-      
-      <div class="result-divider">
-          Fin : <span class="highlight">${fin.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
-      </div>
+    const now = new Date();
+    const poste = getPoste(now);
+    const fin = new Date(now.getTime() + totalSec * 1000);
+    const resteSec = Math.max(0, (poste.fin - now) / 1000);
+    const tempsDispoSec = Math.max(0, resteSec - tempsAiguilles);
 
-      <div class="my-2" style="font-size:14px; color:#aaa;">
-          Capacité max : <span class="highlight" style="font-size:18px;">${pasMaxPossible} blocs</span>
-      </div>
+    // Cadence cible en 1 file : si on avait TOUT en 1 file, quelle cadence tenir ?
+    // On tient compte du temps déjà "fixé" par les 2 files à leur cadence propre,
+    // et on calcule la cadence nécessaire pour les blocs 1 file dans le temps restant.
+    let cadCible = null;
+    if (blocs1 > 0) {
+      const dispoFor1f = tempsDispoSec - temps2;
+      cadCible = dispoFor1f > 0 ? dispoFor1f / blocs1 : 0;
+    } else if (blocs2 > 0) {
+      // Que des 2 files : cadence cible ramenée en équivalent 1 file
+      cadCible = tempsDispoSec > 0 ? tempsDispoSec / blocs2 : 0;
+    }
 
-      <div style="font-size:13px; color:#aaa;">
-          Cadence cible : <span class="highlight">${cadenceCible > 0 ? cadenceCible.toFixed(2) : "---"} s/b</span>
-      </div>
+    // Blocs max faisables à la cadence actuelle dans le temps dispo
+    // = combien de blocs 1file peuvent rentrer dans (tempsDispoSec - temps2), + blocs2 déjà comptés
+    let blocsMax = 0;
+    if (tempsDispoSec > 0) {
+      const dispoFor1f = Math.max(0, tempsDispoSec - temps2);
+      const max1f = cad1 > 0 ? Math.floor(dispoFor1f / cad1) : 0;
+      blocsMax = max1f + blocs2;
+    }
 
-      <div class="mt-2 ${isSlow?'bad':'good'}">
-        ${isSlow ? '🚫 Trop lent' : '👍 À l’heure'}
-      </div>
-    `;
+    const isLate = fin > poste.fin;
+
+    // AFFICHAGE
+    const panel = document.getElementById('resultPanel');
+    panel.classList.remove('visible');
+    void panel.offsetWidth; // force reflow pour relancer l'animation
+    panel.classList.add('visible');
+
+    document.getElementById('resTotalTemps').textContent = formatTemps(totalSec);
+    document.getElementById('resAiguillesLine').textContent = tempsAiguilles > 0
+      ? 'dont '+formatTemps(tempsAiguilles)+' de montages' : '';
+
+    const finH = String(fin.getHours()).padStart(2,'0');
+    const finM = String(fin.getMinutes()).padStart(2,'0');
+    document.getElementById('resFinHeure').textContent = finH+':'+finM;
+    document.getElementById('resFinPoste').innerHTML = 'Fin poste : <strong>'+poste.finStr+'</strong>';
+
+    document.getElementById('resBlocsTotal').textContent = totalBlocs+' blocs';
+    document.getElementById('resTempsPoste').textContent = resteSec > 0 ? formatTemps(resteSec) : '—';
+
+    const ccEl = document.getElementById('resCadCible');
+    if (cadCible !== null && cadCible > 0) {
+      ccEl.textContent = cadCible.toFixed(1)+' s/b';
+      const ref = blocs1 > 0 ? cad1 : cad2;
+      ccEl.className = 'result-cell-val ' + (cadCible >= ref ? 'good' : cadCible >= ref * 0.85 ? 'warn' : 'bad');
+    } else {
+      ccEl.textContent = cadCible === 0 ? 'Impossible' : '—';
+      ccEl.className = 'result-cell-val bad';
+    }
+
+    const bmEl = document.getElementById('resBlocsMax');
+    bmEl.textContent = blocsMax > 0 ? blocsMax+' blocs' : '—';
+    bmEl.className = 'result-cell-val ' + (blocsMax >= totalBlocs ? 'good' : 'bad');
+
+    const vBar = document.getElementById('verdictBar');
+    vBar.className = 'verdict-bar '+(isLate ? 'late' : 'ok');
+    document.getElementById('verdictIcon').textContent  = isLate ? '⚠' : '✓';
+    document.getElementById('verdictText').textContent  = isLate ? 'En retard' : 'Dans les temps';
+    const ecartSec = Math.abs((fin - poste.fin) / 1000);
+    document.getElementById('verdictSub').textContent   = isLate
+      ? 'Retard estimé : '+formatTemps(ecartSec)
+      : 'Marge : '+formatTemps(ecartSec);
+
+    // HISTORIQUE
+    const nowH = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    let aigLabel = '';
+    if (aiguilles.filer)  aigLabel += aiguilles.filer+'× filer ';
+    if (aiguilles.percer) aigLabel += aiguilles.percer+'× percer';
+    histoPoste.push({ heure: nowH, blocs1, cad1, blocs2, cad2, duree: formatTemps(totalSec), ok: !isLate, aig: aigLabel.trim() });
+    if (histoPoste.length > 8) histoPoste.shift();
+    renderHisto();
+
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    sauvegarder();
   }
+
+  function resetHisto() {
+    histoPoste = [];
+    renderHisto();
+  }
+
+  function resetAll() {
+    ['blocs1','blocs2'].forEach(id => document.getElementById(id).value = '');
+    aiguilles = { filer: 0, percer: 0 };
+    document.getElementById('valFiler').textContent  = '0';
+    document.getElementById('valPercer').textContent = '0';
+    document.getElementById('resultPanel').classList.remove('visible');
+    try { localStorage.removeItem('dmv_valeurs'); } catch(e){}
+  }
+
+  // Chargement initial
+  charger();
+  renderHisto();
 </script>
 </body>
 </html>
